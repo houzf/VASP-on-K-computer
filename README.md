@@ -12,7 +12,9 @@ Makefile and shell script for using VASP on K computer
           pjsub submit-vasp-job.sh
 
    Before job submission, some lines need to be modified in submit-vasp-job.sh accordingly, e.g.
+   
    #PJM --stgin "rank=*../../../bin/vasp535_std   %r:./"
+   
    #PJM --mail-list "xxx@gmail.com"
 
 3. checkjob.sh: a shell script file to check whether the VASP job is finished normally or not.
