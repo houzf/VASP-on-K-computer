@@ -25,4 +25,5 @@ Makefile and shell script for using VASP on K computer
 
 5. how to compile VASP 5.3.5:
    For the 724th line of the subdftd3.F, it should be commented out. The variable 'volume' is defined but never used in this file. In the end of the compiling VASP, this line would cause an error: 'undefined  volume_'.
+   
    724 ! REAL(q),external ::volume
