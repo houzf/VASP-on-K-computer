@@ -1,7 +1,7 @@
 # VASP-on-K-computer
 Makefile and shell script for using VASP on K computer
 
-# Note 
+## Note 
 1. Makefile: compile VASP 5.3.5 on K-computer via Fujitsu Fortran Compiler (frtpx, mpifrtpx)
    Fujitsu Fortran Driver Version 1.2.0 P-id: L30000-14 (Nov 30 2016 13:50:48) K-1.2.0-22)
 
