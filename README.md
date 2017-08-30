@@ -26,11 +26,11 @@ Makefile and shell script for using VASP on K computer
    #PJM --mail-list "xxx@gmail.com"
    ```
 
-3. **checkjob.sh**: a shell script file to check whether the VASP job is finished normally or not.
+3. **checkjobs.sh**: a shell script file to check whether the VASP job is finished normally or not.
 
   - usage: 
   ```
-    chmod +x checkjob.sh
+    chmod +x checkjobs.sh
   ```
 4. **getjobs.sh**: a shell script file to check the job status and the correspoding work directories.
 
