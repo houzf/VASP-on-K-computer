@@ -34,7 +34,11 @@ else
 fi
 
 final_line=`tail -1  "${cfile[index]}"`
-finalword+=(`echo  $final_line | awk '{printf "%s\n", $1}'`)
+if [  ${#final_line} -gt  0 ]; then
+    finalword+=(`echo  $final_line | awk '{printf "%s\n", $1}'`)
+else
+    finalword+=(`echo  'Blank_line'`)
+fi
 
 isif+=(`grep   'ISIF' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
 nsw+=(`grep   'number of steps for IOM' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
