@@ -39,23 +39,52 @@ if [  ${#final_line} -gt  0 ]; then
 else
     finalword+=(`echo  'Blank_line'`)
 fi
+if  [  "${finalword[index]}" == 'Voluntary' ]; then
+    jobstatus+=("Success")
+else
+    jobstatus+=("Failure")
+fi
 
-isif+=(`grep   'ISIF' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
-nsw+=(`grep   'number of steps for IOM' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
-nsteps+=(`grep   'Iteration' "${cfile[index]}"|tail -1 |sed  "s/(/ /g"|awk '{printf "%s\n", $3}'`)
+tagisif=`grep   'ISIF' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`
+if [  ${#tagisif} -gt  0 ]; then
+#isif+=(`grep   'ISIF' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
+    isif+=(`echo $tagisif`)
+else
+    isif+=(0)
+fi
+tagnsw=`grep   'number of steps for IOM' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`
+if [  ${#tagnsw} -gt  0 ]; then
+#nsw+=(`grep   'number of steps for IOM' "${cfile[index]}"|tail -1 |awk '{printf "%s\n", $3}'`)
+    nsw+=(`echo $tagnsw `)
+else
+    nsw+=(0)
+fi
+optsteps=`grep   'Iteration' "${cfile[index]}"|tail -1 |sed  "s/(/ /g"|awk '{printf "%s\n", $3}'`
+if [  ${#optsteps} -gt  0 ]; then
+#nsteps+=(`grep   'Iteration' "${cfile[index]}"|tail -1 |sed  "s/(/ /g"|awk '{printf "%s\n", $3}'`)
+    nsteps+=(`echo $optsteps `)
+else
+    nsteps+=(0)
+fi
 yourhigh=`grep 'Your highest band is occupied at some k-points!'  "${cfile[index]}"|tail -1|awk '{printf "%s\n", $2}'`
 if [  ${#yourhigh} -gt  0 ]; then
     your+=("insufficent")
 else
     your+=("sufficent")
 fi
-nbands+=(`grep 'NBANDS='   "${cfile[index]}"|tail -1|  awk '{printf "%s\n", $15}'`)
-highestband+=(`grep 'NELECT ='  "${cfile[index]}"|tail -1|  awk '{printf "%6d\n", $3/2}'`)
-
-if  [  "${finalword[index]}" == 'Voluntary' ]; then
-    jobstatus+=("Success")
+tagnbands=`grep 'NBANDS='   "${cfile[index]}"|tail -1|  awk '{printf "%s\n", $15}'`
+if [  ${#tagnbands} -gt  0 ]; then
+#nbands+=(`grep 'NBANDS='   "${cfile[index]}"|tail -1|  awk '{printf "%s\n", $15}'`)
+    nbands+=(`echo $tagnbands`)
 else
-    jobstatus+=("Failure")
+    nbands+=("0")
+fi
+efband=`grep 'NELECT ='  "${cfile[index]}"|tail -1|  awk '{printf "%6d\n", $3/2}'`
+if [  ${#efband} -gt  0 ]; then
+#highestband+=(`grep 'NELECT ='  "${cfile[index]}"|tail -1|  awk '{printf "%6d\n", $3/2}'`)
+    highestband+=(`echo $efband`)
+else
+    highestband+=("0")
 fi
 done
 
@@ -70,25 +99,22 @@ echo "#Path"    "ISIF"  "NSW" "NSTEP" "Job_stat"  "C_P"  "NBANDS" "HBANDS" "NBAN
 for index in  "${!jobstatus[@]}"
 do
     if [  "${jobstatus[index]}" == 'Success'  ];then
-    echo "${cfile[index]}"  "${isif[index]}"  "${nsw[index]}" "${nsteps[index]}" \
-          "${jobstatus[index]}"  "${compfile[index]}"  \
-    "${nbands[index]}" "${highestband[index]}" "${your[index]}"|\
-    awk '{printf "%-30s %-2d %5d %5d %9s %5s %6d %6d %10s\n", $1,$2,$3,$4,$5,$6,$7,$8, $9}'
+    echo "${cfile[index]}"     "${isif[index]}"       "${nsw[index]}" \
+          "${nsteps[index]}"   "${jobstatus[index]}"  "${compfile[index]}"  \
+          "${nbands[index]}"   "${highestband[index]}" "${your[index]}"  |\
+   awk '{printf "%-30s %-2d %5d %5d %9s %5s %6d %6d %10s\n", $1,$2,$3,$4,$5,$6,$7,$8, $9}'
     fi
 done
+
 echo "#Abnormally finished jobs:"
 echo "#Path"    "ISIF"  "NSW" "NSTEP" "Job_stat"  "C_P"  "NBANDS" "HBANDS" "NBANDS_OK"|\
     awk '{printf "%-30s %-4s %-4s %-5s %-9s %-5s %-6s %-7s %-10s\n", $1,$2,$3,$4,$5,$6,$7,$8,$9}'
 for index in  "${!jobstatus[@]}"
 do
     if [  "${jobstatus[index]}" != 'Success'  ];then
-    echo "${cfile[index]}"  "${isif[index]}"  "${nsw[index]}" "${nsteps[index]}"\
-          "${jobstatus[index]}"  "${compfile[index]}"  \
-    "${nbands[index]}" "${highestband[index]}" "${your[index]}"|\
+    echo "${cfile[index]}"  "${isif[index]}"            "${nsw[index]}" \
+         "${nsteps[index]}" "${jobstatus[index]}"       "${compfile[index]}"  \
+         "${nbands[index]}" "${highestband[index]}"     "${your[index]}"|\
     awk '{printf "%-30s %-2d %5d %5d %9s %5s %6d %6d %10s\n", $1,$2,$3,$4,$5,$6,$7,$8, $9}'
     fi
 done
-
-
-
-
